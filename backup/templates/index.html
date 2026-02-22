@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>V Karthikeyan | Software Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #ffd700;
+            --primary: #667eea;
+            --glass: rgba(0, 0, 0, 0.5);
+            /* Much darker for contrast */
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+            height: 1000vh;
+            /* Sharper, faster journey */
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- OVERDRIVE FRAME ENGINE --- */
+        #frame-canvas {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -10;
+            filter: brightness(0.5) contrast(1.2);
+            /* Deeper shadows for text pop */
+        }
+
+        .overlay-dim {
+            position: fixed;
+            inset: 0;
+            z-index: -5;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.9) 100%);
+            pointer-events: none;
+        }
+
+        /* --- SUPREME CONTRAST CONTENT --- */
+        .content-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            perspective: 2000px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .section-container {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            pointer-events: auto;
+            will-change: transform, opacity;
+            width: 100vw;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        /* Bold 900 Typography */
+        .title-xl {
+            font-size: clamp(2.5rem, 12vw, 9rem);
+            line-height: 0.85;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            white-space: nowrap;
+            text-transform: uppercase;
+            text-shadow: 0 15px 60px rgba(0, 0, 0, 1);
+        }
+
+        .section-title {
+            font-size: clamp(2.2rem, 9vw, 7rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            white-space: nowrap;
+            margin-bottom: 2rem;
+            text-shadow: 0 10px 40px rgba(0, 0, 0, 1);
+        }
+
+        .text-sm-resp {
+            font-size: clamp(0.75rem, 2vw, 0.95rem);
+            letter-spacing: 0.6em;
+            text-transform: uppercase;
+            font-weight: 900;
+            /* Max Bold subtext */
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            /* Reduced for GPU performance */
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: clamp(2rem, 6vw, 4rem);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+            transition: border-color 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: var(--primary);
+        }
+
+        .skill-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.6rem 1.4rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 900;
+            /* Bold tags */
+            letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+        }
+
+        .skill-tag:hover {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        .hud-element {
+            font-size: 11px;
+            letter-spacing: 0.5em;
+            opacity: 1;
+            text-transform: uppercase;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 1);
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                backdrop-filter: none;
+                background: rgba(0, 0, 0, 0.85);
+            }
+
+            .hide-mobile {
+                display: none;
+            }
+
+            .title-xl {
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOADING SHIELD (Optional visual fix for blank frames) -->
+    <div id="loader"
+        class="fixed inset-0 bg-black z-[100] flex items-center justify-center font-black hud-element transition-opacity duration-1000">
+        LOADING_SENSORS...
+    </div>
+
+    <!-- BACKGROUND CANVAS -->
+    <canvas id="frame-canvas"></canvas>
+    <div class="overlay-dim"></div>
+
+    <!-- HUD -->
+    <div class="fixed top-12 left-12 z-50 mix-blend-difference">
+        <div class="text-3xl font-black tracking-[0.8em]">VK</div>
+    </div>
+
+    <div class="fixed top-12 right-12 z-50 hide-mobile">
+        <div class="flex space-x-12">
+            <a href="#about" class="hud-element hover:text-blue-400 transition-colors">ABOUT</a>
+            <a href="#skills" class="hud-element hover:text-blue-400 transition-colors">SKILLS</a>
+            <a href="#projects" class="hud-element hover:text-blue-400 transition-colors">PROJECTS</a>
+        </div>
+    </div>
+
+    <div class="fixed bottom-12 left-12 z-50 hud-element hide-mobile">
+        <div class="text-blue-400">MISSION: ARCTURUS_REACH</div>
+        <div class="mt-2 opacity-60">COORD: 48.29.100.22</div>
+    </div>
+
+    <div class="fixed bottom-12 right-12 z-50 hud-element text-right">
+        <div id="hud-vel" class="text-white">VEL: 0.00 LY/S</div>
+        <div id="hud-dist" class="mt-2 opacity-60 font-bold">DST: 14.5 PC</div>
+        <div id="hud-status" class="mt-2 text-blue-300 italic font-black">PILOT_ACTIVE</div>
+    </div>
+
+    <main class="content-layer">
+
+        <!-- SECTION 1: HERO -->
+        <div class="section-container" id="hero-sec" style="opacity: 1;">
+            <div class="text-center px-4">
+                <div class="hud-element mb-12 text-blue-400 font-black">LINK_ESTABLISHED</div>
+                <h1 class="title-xl mb-8">V KARTHIKEYAN</h1>
+                <p class="text-sm-resp mb-12">Software Engineer | Python Developer</p>
+                <div
+                    class="flex flex-col items-center gap-6 text-[12px] tracking-[0.6em] font-black uppercase text-white">
+                    <span class="opacity-60 hover:opacity-100 transition-opacity">📧 kmn722314@gmail.com</span>
+                    <span class="opacity-60 hover:opacity-100 transition-opacity">📍 Chennai, India</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: ABOUT -->
+        <div class="section-container" id="about-sec">
+            <div class="max-w-4xl px-8 w-full">
+                <h2 class="hud-element mb-12 text-blue-400 italic">01 // THE_MANIFEST</h2>
+                <p class="text-3xl md:text-6xl font-black leading-[1.1] mb-16">
+                    A dedicated <span class="text-blue-400">Software Architect</span> bridging the void between <span
+                        class="text-white">Logic</span> and <span class="text-white">Reality</span>.
+                </p>
+                <div class="glass-card mb-12">
+                    <p class="text-white text-lg md:text-2xl leading-relaxed font-black">
+                        RIOTA Systems Specialist. Progressive, adaptive, and mastering the latest trends in high-scale
+                        tech.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                    <span class="skill-tag">Leadership</span>
+                    <span class="skill-tag">Quick Learning</span>
+                    <span class="skill-tag">Problem Solving</span>
+                    <span class="skill-tag">Adaptive</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: SKILLS -->
+        <div class="section-container" id="skills-sec">
+            <div class="max-w-6xl px-8 w-full">
+                <h2 class="hud-element mb-20 md:text-center text-blue-400">02 // TECH_SPECS</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="glass-card">
+                        <h3 class="hud-element opacity-100 mb-8 font-black text-blue-300">Languages</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">Java</span>
+                            <span class="skill-tag">Kotlin</span>
+                            <span class="skill-tag">Dart</span>
+                            <span class="skill-tag">C</span>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="hud-element opacity-100 mb-8 font-black text-blue-300">Frameworks</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="skill-tag">PyQt5</span>
+                            <span class="skill-tag">Flask</span>
+                            <span class="skill-tag">Socket</span>
+                            <span class="skill-tag">PySerial</span>
+                            <span class="skill-tag">Kivy</span>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="hud-element opacity-100 mb-8 font-black text-blue-300">Mobile</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="skill-tag">Jetpack</span>
+                            <span class="skill-tag">Compose</span>
+                            <span class="skill-tag">Flutter</span>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="hud-element opacity-100 mb-8 font-black text-blue-300">Core</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="skill-tag">OpenCV</span>
+                            <span class="skill-tag">ML</span>
+                            <span class="skill-tag">Vision</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: PROJECTS -->
+        <div class="section-container" id="projects-sec">
+            <div class="max-w-6xl px-8 w-full">
+                <h2 class="hud-element mb-20 md:text-center text-blue-400">03 // WAYPOINTS</h2>
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div class="glass-card border-b-4 border-b-blue-600">
+                        <div class="hud-element text-blue-400 mb-6">CV_ENGINE</div>
+                        <h3 class="text-4xl font-black mb-8">Eye Trajectory Prediction</h3>
+                        <p class="text-white text-base mb-12 font-black leading-relaxed">
+                            Advanced computer vision engine predicting ocular flux with high-performance Python
+                            processing.
+                        </p>
+                        <div class="flex gap-4">
+                            <span class="hud-element border-2 border-white px-5 py-2 font-black">PYTHON</span>
+                            <span class="hud-element border-2 border-white px-5 py-2 font-black">OPENCV</span>
+                        </div>
+                    </div>
+                    <div class="glass-card border-b-4 border-b-indigo-700">
+                        <div class="hud-element text-blue-400 mb-6">OBJECT_HUB</div>
+                        <h3 class="text-4xl font-black mb-8">TensorFlow Portal</h3>
+                        <p class="text-white text-base mb-12 font-black leading-relaxed">
+                            Custom ML training pipeline with a high-velocity Flutter inference dashboard.
+                        </p>
+                        <div class="flex gap-4">
+                            <span class="hud-element border-2 border-white px-5 py-2 font-black">FLUTTER</span>
+                            <span class="hud-element border-2 border-white px-5 py-2 font-black">TF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: EXPERIENCE -->
+        <div class="section-container" id="exp-sec">
+            <div class="max-w-4xl px-8 w-full">
+                <h2 class="hud-element mb-16 text-blue-400">04 // LOG_DATA</h2>
+                <div class="space-y-12">
+                    <div class="glass-card border-l-[12px] border-l-blue-600">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-2xl font-black">Software Engineer</h3>
+                                <div class="text-blue-400 font-black text-base tracking-widest mt-1">RIOTA Group of
+                                    Companies</div>
+                            </div>
+                            <span class="hud-element text-white font-black opacity-100">2024 - PRESENT</span>
+                        </div>
+                        <p class="text-white text-lg font-black leading-relaxed italic">
+                            Architecting the future of software systems and mastering high-impact emerging technologies.
+                        </p>
+                    </div>
+                    <div class="glass-card border-l-[12px] border-l-gray-300">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-2xl font-black">B.Tech - Information Tech</h3>
+                                <div class="text-white/80 font-black text-base tracking-widest mt-1">SRI SAIRAM
+                                    ENGINEERING COLLEGE</div>
+                            </div>
+                            <span class="hud-element text-white font-black opacity-100">2020 - 2024</span>
+                        </div>
+                        <p class="text-white text-lg font-black leading-relaxed">
+                            Graduated with Distinction (<span class="text-blue-400 font-black">8.29 CGPA</span>). Core
+                            focus on logic and system.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: CONTACT -->
+        <div class="section-container" id="contact-sec">
+            <div class="max-w-5xl text-center px-8 w-full">
+                <h2 class="hud-element mb-12 text-blue-400">05 // ARRIVAL</h2>
+                <h3 class="title-xl mb-24 tracking-tighter">CONTACT_V_KARTHIKEYAN</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="mailto:kmn722314@gmail.com" class="glass-card py-12 hover:bg-blue-600/40 group border-2">
+                        <div class="hud-element mb-4 font-black text-white">EMAIL</div>
+                        <span class="text-[12px] tracking-widest text-white/70 font-black">kmn722314@gmail.com</span>
+                    </a>
+                    <a href="tel:6381338931" class="glass-card py-12 hover:bg-blue-600/40 group border-2">
+                        <div class="hud-element mb-4 font-black text-white">PHONE</div>
+                        <span class="text-[12px] tracking-widest text-white/70 font-black">+91 6381338931</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/karthikeyan-v-25759429a/" target="_blank"
+                        class="glass-card py-12 hover:bg-blue-600/40 group border-2">
+                        <div class="hud-element mb-4 font-black text-white">LINKEDIN</div>
+                        <span class="text-[12px] tracking-widest text-white/70 font-black">CONNECT_VK</span>
+                    </a>
+                    <a href="https://github.com/Karthikeyan10022003" target="_blank"
+                        class="glass-card py-12 hover:bg-blue-600/40 group border-2">
+                        <div class="hud-element mb-4 font-black text-white">GITHUB</div>
+                        <span class="text-[12px] tracking-widest text-white/70 font-black">REPO_VK</span>
+                    </a>
+                </div>
+                <div class="mt-32 hud-element text-blue-400/20">SYSTEM_RECOVERY_2026 // END_OF_LINE</div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. OVERDRIVE SCROLL ---
+        const lenis = new Lenis({
+            duration: 0.8, // Ultra-responsive reaction
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+        });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // --- 2. PRE-DECODED CANVAS ENGINE (ZERO LAG) ---
+        const canvas = document.getElementById('frame-canvas');
+        const context = canvas.getContext('2d');
+        const frameCount = 80;
+        const images = [];
+        const air = { frame: 0 };
+        let framesReady = 0;
+
+        const currentFrame = index => `/static/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+
+        // Pre-decoding Logic
+        (async () => {
+            const loadPromises = Array.from({ length: frameCount }, (_, i) => {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.src = currentFrame(i);
+                    img.onload = async () => {
+                        try {
+                            await img.decode(); // UNPACK TO GPU MEMORY IMMEDIATELY
+                            images[i] = img;
+                            framesReady++;
+                            if (framesReady === frameCount) {
+                                document.getElementById('loader').style.opacity = '0';
+                                setTimeout(() => document.getElementById('loader').remove(), 1000);
+                            }
+                        } catch (e) { images[i] = img; } // Fallback
+                        resolve();
+                    };
+                });
+            });
+            await Promise.all(loadPromises);
+            render();
+        })();
+
+        function render() {
+            const img = images[air.frame];
+            if (!img) return;
+
+            const canvasRatio = window.innerWidth / window.innerHeight;
+            const imgRatio = img.width / img.height;
+            let drawWidth, drawHeight, offsetX, offsetY;
+
+            if (canvasRatio > imgRatio) {
+                drawWidth = window.innerWidth;
+                drawHeight = window.innerWidth / imgRatio;
+                offsetX = 0;
+                offsetY = (window.innerHeight - drawHeight) / 2;
+            } else {
+                drawWidth = window.innerHeight * imgRatio;
+                drawHeight = window.innerHeight;
+                offsetX = (window.innerWidth - drawWidth) / 2;
+                offsetY = 0;
+            }
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        }
+
+        window.addEventListener('resize', render);
+
+        // --- 3. ZERO-LATENCY MASTER TIMELINE ---
+        const mainTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 0.05, // LOCKS FRAME TO WHEEL INSTANTLY
+                onUpdate: (self) => {
+                    const progress = self.progress;
+                    const frameIndex = Math.min(frameCount - 1, Math.floor(progress * frameCount));
+                    if (air.frame !== frameIndex) {
+                        air.frame = frameIndex;
+                        render();
+                    }
+                }
+            }
+        });
+
+        // --- 4. OPTIMIZED SPATIAL JOURNEY ---
+
+        mainTl.to("#hero-sec", { z: 1200, scale: 2.2, opacity: 0, duration: 2, ease: "power1.in" }, 0);
+
+        mainTl.fromTo("#about-sec",
+            { z: -2500, scale: 0.1, opacity: 0 },
+            { z: 0, scale: 1, opacity: 1, duration: 1.5, ease: "sine.out" },
+            1.2
+        ).to("#about-sec", { z: 2500, scale: 4, opacity: 0, duration: 1.5 }, 2.5);
+
+        mainTl.fromTo("#skills-sec",
+            { z: -2500, scale: 0.1, opacity: 0 },
+            { z: 0, scale: 1, opacity: 1, duration: 1.5, ease: "sine.out" },
+            3.8
+        ).to("#skills-sec", { z: 2500, scale: 4, opacity: 0, duration: 1.5 }, 5);
+
+        mainTl.fromTo("#projects-sec",
+            { z: -2500, scale: 0.1, opacity: 0 },
+            { z: 0, scale: 1, opacity: 1, duration: 1.5, ease: "sine.out" },
+            6.2
+        ).to("#projects-sec", { z: 2500, scale: 4, opacity: 0, duration: 1.5 }, 7.5);
+
+        mainTl.fromTo("#exp-sec",
+            { z: -2500, scale: 0.1, opacity: 0 },
+            { z: 0, scale: 1, opacity: 1, duration: 1.5, ease: "sine.out" },
+            8.5
+        ).to("#exp-sec", { z: 2500, scale: 4, opacity: 0, duration: 1.5 }, 10);
+
+        mainTl.fromTo("#contact-sec",
+            { z: -2500, scale: 0.1, opacity: 0 },
+            { z: 0, scale: 1, opacity: 1, duration: 1.5, ease: "sine.out" },
+            11
+        );
+
+        // --- 5. WARP TELEMETRY ---
+        ScrollTrigger.create({
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            onUpdate: self => {
+                const vel = (Math.abs(self.getVelocity()) / 1000).toFixed(2);
+                document.getElementById('hud-vel').innerText = `VEL: ${vel} LY/S`;
+                document.getElementById('hud-dist').innerText = `DST: ${(14.5 - self.progress * 14.5).toFixed(1)} PC`;
+
+                let stats = "CRUISING";
+                if (self.progress > 0.98) stats = "ARRIVED";
+                else if (vel > 2.5) stats = "WARP_DRIVE";
+                document.getElementById('hud-status').innerText = stats;
+            }
+        });
+
+    </script>
+</body>
+
+</html>

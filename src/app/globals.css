@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --blue-glow: rgba(59, 130, 246, 0.5);
+    --blue-glow-soft: rgba(59, 130, 246, 0.15);
+    --grid-line: rgba(255, 255, 255, 0.03);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #050505;
+    color: #ffffff;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: #fff;
+  }
+
+  /* Native scroll snap for section transitions */
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      scroll-snap-type: none;
+      /* native scroll only, no JS */
+    }
+  }
+}
+
+@layer utilities {
+
+  /* Typography */
+  .text-luxury {
+    letter-spacing: 0.25em;
+  }
+
+  /* Glass morphism card */
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/[0.03] border border-white/[0.08] rounded-none;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-card:hover {
+    @apply border-blue-500/30;
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* Blue glowing pill */
+  .pill {
+    @apply px-3 py-1 text-[10px] md:text-xs font-black tracking-widest uppercase border border-white/10 bg-white/[0.04];
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .pill:hover {
+    @apply bg-blue-500/20 border-blue-500/40;
+  }
+
+  /* Radial dark gradient */
+  .bg-radial-dark {
+    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.12) 0%, transparent 65%);
+  }
+
+  /* CRT scanlines  */
+  .bg-scanlines {
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.35) 50%);
+    background-size: 100% 3px;
+  }
+
+  /* Blue glow ring on focus/visible elements */
+  .glow-blue {
+    box-shadow: 0 0 20px var(--blue-glow-soft), 0 0 60px rgba(59, 130, 246, 0.05);
+  }
+
+  /* Divider line */
+  .divider {
+    @apply w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  }
+
+  /* Subtle grid background */
+  .bg-grid {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Section fade-in animation (CSS only, transform+opacity) */
+  .fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Reduced motion: skip animations */
+  @media (prefers-reduced-motion: reduce) {
+    .fade-up {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Scrollbar hidden */
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+* {
+  scrollbar-width: none;
+}
