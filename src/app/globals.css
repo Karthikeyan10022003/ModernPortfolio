@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Michroma&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,88 +26,137 @@
     color: #ffffff;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-futuristic {
+    font-family: 'Michroma', sans-serif;
   }
 
   ::selection {
     background: rgba(59, 130, 246, 0.3);
     color: #fff;
   }
-
-  /* Native scroll snap for section transitions */
-  @media (prefers-reduced-motion: no-preference) {
-    :root {
-      scroll-snap-type: none;
-      /* native scroll only, no JS */
-    }
-  }
 }
 
 @layer utilities {
-
-  /* Typography */
   .text-luxury {
     letter-spacing: 0.25em;
   }
 
-  /* Glass morphism card */
+  /* Refined Glass Morphism */
   .glass-card {
-    @apply backdrop-blur-xl bg-white/[0.03] border border-white/[0.08] rounded-none;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    @apply backdrop-blur-2xl bg-white/[0.02] border border-white/[0.05] rounded-none;
+    box-shadow:
+      0 10px 40px -10px rgba(0, 0, 0, 0.5),
+      inset 0 1px 1px rgba(255, 255, 255, 0.03);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .glass-card:hover {
-    @apply border-blue-500/30;
-    box-shadow: 0 0 40px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    @apply border-blue-500/20 bg-white/[0.04];
+    box-shadow:
+      0 20px 60px -15px rgba(59, 130, 246, 0.15),
+      inset 0 1px 1px rgba(255, 255, 255, 0.05);
   }
 
-  /* Blue glowing pill */
   .pill {
-    @apply px-3 py-1 text-[10px] md:text-xs font-black tracking-widest uppercase border border-white/10 bg-white/[0.04];
-    transition: background 0.2s, border-color 0.2s;
+    @apply px-3 py-1 text-[9px] md:text-xs font-bold tracking-[0.2em] uppercase border border-white/10 bg-white/[0.02];
+    transition: all 0.3s ease;
   }
 
   .pill:hover {
-    @apply bg-blue-500/20 border-blue-500/40;
+    @apply bg-blue-500/10 border-blue-500/30 text-blue-400;
   }
 
-  /* Radial dark gradient */
   .bg-radial-dark {
-    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.12) 0%, transparent 65%);
+    background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
   }
 
-  /* CRT scanlines  */
   .bg-scanlines {
-    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.35) 50%);
-    background-size: 100% 3px;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.2) 50%);
+    background-size: 100% 4px;
   }
 
-  /* Blue glow ring on focus/visible elements */
-  .glow-blue {
-    box-shadow: 0 0 20px var(--blue-glow-soft), 0 0 60px rgba(59, 130, 246, 0.05);
+  /* Cinematic Noise Overlay */
+  .noise-overlay::after {
+    content: "";
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 1000;
+    animation: noise-move 8s steps(10) infinite;
   }
 
-  /* Divider line */
-  .divider {
-    @apply w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  @keyframes noise-move {
+    0% {
+      transform: translate(0, 0);
+    }
+
+    10% {
+      transform: translate(-5%, -5%);
+    }
+
+    20% {
+      transform: translate(-10%, 5%);
+    }
+
+    30% {
+      transform: translate(5%, -10%);
+    }
+
+    40% {
+      transform: translate(-5%, 15%);
+    }
+
+    50% {
+      transform: translate(-10%, 5%);
+    }
+
+    60% {
+      transform: translate(15%, 0);
+    }
+
+    70% {
+      transform: translate(0, 10%);
+    }
+
+    80% {
+      transform: translate(-15%, 0);
+    }
+
+    90% {
+      transform: translate(10%, 5%);
+    }
+
+    100% {
+      transform: translate(5%, 0);
+    }
   }
 
-  /* Subtle grid background */
   .bg-grid {
     background-image:
       linear-gradient(var(--grid-line) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: 60px 60px;
+    background-size: 80px 80px;
   }
 
-  /* Section fade-in animation (CSS only, transform+opacity) */
   .fade-up {
-    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(24px);
+      transform: translateY(40px);
     }
 
     to {
@@ -114,17 +165,24 @@
     }
   }
 
-  /* Reduced motion: skip animations */
-  @media (prefers-reduced-motion: reduce) {
-    .fade-up {
-      animation: none;
-      opacity: 1;
-      transform: none;
+  /* Scroll Progress Line */
+  .scroll-line {
+    @apply fixed left-0 top-0 h-full w-[2px] bg-blue-500/30 z-[100] origin-top;
+    transform: scaleY(var(--scroll-percent, 0));
+    transition: transform 0.1s ease-out;
+  }
+
+  @keyframes scroll-hint {
+    0% {
+      transform: translateY(-100%);
+    }
+
+    100% {
+      transform: translateY(100%);
     }
   }
 }
 
-/* Scrollbar hidden */
 ::-webkit-scrollbar {
   width: 0;
   background: transparent;

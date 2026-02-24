@@ -25,66 +25,70 @@ const timeline = [
         period: 'Apr 2019 – Mar 2020',
         desc: 'Completed with 82%, establishing a strong academic foundation.',
         active: false,
-        badge: '82%',
     },
 ];
 
 export const Experience = () => {
     return (
-        <section className="relative w-full py-20 md:py-36 px-5 sm:px-8 md:px-16 lg:px-24">
-            <div className="max-w-4xl mx-auto">
+        <section className="relative w-full py-20 md:py-32 px-5 md:px-16 lg:px-24 flex flex-col items-center overflow-hidden">
+            <div className="max-w-5xl w-full relative z-10">
                 {/* Header */}
-                <div className="mb-12 md:mb-16">
-                    <span className="inline-block text-blue-400 font-bold text-[9px] md:text-[10px] tracking-[0.5em] uppercase mb-4 opacity-70">
-                        04 // LOG_DATA
-                    </span>
-                    <h2 className="text-[clamp(1.4rem,4vw,2.8rem)] font-black uppercase leading-tight">
-                        Experience &amp; Education
+                <div className="mb-12 md:mb-20">
+                    <div className="flex items-center gap-4 mb-6 md:mb-8">
+                        <span className="w-8 md:w-12 h-px bg-blue-500/30" />
+                        <span className="text-blue-400 font-bold text-[9px] md:text-[11px] tracking-[0.4em] md:tracking-[0.6em] uppercase">
+                            ARCHIVE // 02
+                        </span>
+                    </div>
+                    <h2 className="text-[clamp(1.5rem,8vw,3.5rem)] font-black uppercase leading-tight font-futuristic">
+                        Experience <span className="text-white/20">&amp;</span><br />Education
                     </h2>
                 </div>
 
-                {/* Timeline */}
-                <div className="relative flex flex-col gap-0">
+                <div className="relative pl-8 md:pl-16">
                     {/* Vertical line */}
-                    <div className="absolute left-3 md:left-4 top-2 bottom-2 w-px bg-gradient-to-b from-blue-500/60 via-white/10 to-transparent" />
+                    <div className="absolute left-3 md:left-4 top-0 bottom-0 w-[1px] bg-gradient-to-b from-blue-500/50 via-white/10 to-transparent shadow-[0_0_10px_rgba(59,130,246,0.2)]" />
 
-                    {timeline.map((item, i) => (
-                        <div key={i} className="relative pl-9 md:pl-12 pb-10 md:pb-14 last:pb-0">
-                            {/* Node */}
-                            <div
-                                className={`absolute left-0 top-1 w-6 h-6 md:w-8 md:h-8 rounded-full border flex items-center justify-center
-                  ${item.active
-                                        ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_12px_rgba(59,130,246,0.5)]'
-                                        : 'border-white/20 bg-white/5'
-                                    }`}
-                            >
-                                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />
-                            </div>
+                    <div className="flex flex-col gap-16 md:gap-24">
+                        {timeline.map((item, idx) => (
+                            <div key={idx} className="relative group">
+                                {/* Timeline Node */}
+                                <div
+                                    className={`absolute -left-[23px] md:-left-[55px] top-1.5 w-5 h-5 md:w-8 md:h-8 rounded-full border-2 flex items-center justify-center transition-all duration-500 z-10
+                                      ${item.active
+                                            ? 'border-blue-500 bg-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                                            : 'border-white/10 bg-[#050505] group-hover:border-white/30'
+                                        }`}
+                                >
+                                    <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${item.active ? 'bg-blue-400' : 'bg-white/20'}`} />
+                                </div>
 
-                            {/* Content */}
-                            <div className="flex flex-col gap-1.5">
-                                <div className="flex flex-wrap items-start justify-between gap-2">
-                                    <h3 className="text-[clamp(1rem,2.5vw,1.6rem)] font-black uppercase leading-tight">
+                                <div className="flex flex-col gap-3 md:gap-4 group-hover:translate-x-2 transition-all duration-500">
+                                    <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                                        <span className={`text-[9px] md:text-[11px] font-black tracking-widest uppercase transition-colors duration-500 ${item.active ? 'text-blue-400' : 'text-white/30'}`}>
+                                            {item.period}
+                                        </span>
+                                        <span className="text-[8px] md:text-[9px] px-2 py-0.5 border border-white/5 text-white/20 font-bold tracking-widest uppercase bg-white/[0.02]">
+                                            {item.type}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="text-xl md:text-3xl font-black uppercase leading-tight tracking-tight font-futuristic">
                                         {item.role}
                                     </h3>
-                                    {item.badge && (
-                                        <span className="text-[9px] font-black text-blue-400 border border-blue-500/30 px-2 py-0.5 tracking-widest shrink-0">
-                                            {item.badge}
-                                        </span>
-                                    )}
+
+                                    <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-white/50 tracking-wider">
+                                        <span className="text-blue-500/50">@</span>
+                                        <span className="uppercase">{item.org}</span>
+                                    </div>
+
+                                    <p className="text-white/40 text-[11px] md:text-sm leading-relaxed max-w-2xl font-medium mt-2">
+                                        {item.desc}
+                                    </p>
                                 </div>
-                                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[9px] md:text-[10px] font-bold tracking-wider uppercase">
-                                    <span className={item.active ? 'text-blue-400' : 'text-white/40'}>
-                                        {item.org}
-                                    </span>
-                                    <span className="text-white/20">{item.period}</span>
-                                </div>
-                                <p className="text-white/50 text-[10px] md:text-xs leading-relaxed font-semibold uppercase mt-1">
-                                    {item.desc}
-                                </p>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>

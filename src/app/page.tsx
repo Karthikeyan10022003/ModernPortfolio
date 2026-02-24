@@ -13,7 +13,7 @@ import { CinematicVideo } from '@/components/CinematicVideo';
  */
 export default function Home() {
   return (
-    <main className="relative w-full min-h-screen text-white">
+    <main className="relative w-full min-h-screen text-white noise-overlay">
 
       {/* ────────────────────────────────────────
           Cinematic background: GPU-decoded video.
