@@ -31,8 +31,8 @@ export const Hero = () => {
                     </div>
 
                     {/* Name - Adjusted clamp for mobile */}
-                    <h1 className="text-[clamp(1.8rem,14vw,8.5rem)] font-black tracking-[-0.04em] leading-[0.85] mb-6 md:mb-10 uppercase text-white font-futuristic break-words w-full">
-                        V&nbsp;KARTHIKEYAN
+                    <h1 className="text-[clamp(1.2rem,8vw,5rem)] font-black tracking-[-0.04em] leading-[0.85] mb-6 md:mb-10 uppercase text-white font-futuristic break-words w-full">
+                        V.KARTHIKEYAN
                     </h1>
 
                     {/* Role */}
